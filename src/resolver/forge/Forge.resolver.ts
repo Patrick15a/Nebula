@@ -7,8 +7,8 @@ import { LoggerUtil } from '../../util/LoggerUtil.js'
 
 export abstract class ForgeResolver extends BaseResolver {
 
-    protected readonly MOJANG_REMOTE_REPOSITORY = 'https://libraries.minecraft.net/'
-    protected readonly REMOTE_REPOSITORY = 'https://files.minecraftforge.net/maven/'
+    protected readonly MOJANG_REMOTE_REPOSITORY: string = 'https://libraries.minecraft.net/'
+    protected readonly REMOTE_REPOSITORY: string = 'https://files.minecraftforge.net/maven/'
 
     protected repoStructure: RepoStructure
     protected artifactVersion: string
