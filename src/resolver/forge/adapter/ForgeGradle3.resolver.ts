@@ -36,9 +36,6 @@ export class ForgeGradle3Adapter extends ForgeResolver {
         return VersionUtil.isVersionAcceptable(version, [12, 13, 14, 15, 16, 17, 18, 19, 20])
     }
 
-    protected readonly LIB_GROUP: string
-    protected readonly LIB_ARTIFACT: string
-
     private generatedFiles: GeneratedFile[] | undefined
     private wildcardsInUse: string[] | undefined
 
@@ -52,8 +49,6 @@ export class ForgeGradle3Adapter extends ForgeResolver {
         invalidateCache: boolean
     ) {
         super(absoluteRoot, relativeRoot, baseUrl, minecraftVersion, forgeVersion, discardOutput, invalidateCache)
-        this.LIB_GROUP = LibRepoStructure.FORGE_GROUP
-        this.LIB_ARTIFACT = LibRepoStructure.FORGE_ARTIFACT
         this.configure()
     }
 
@@ -70,16 +65,16 @@ export class ForgeGradle3Adapter extends ForgeResolver {
             this.generatedFiles = [
                 {
                     name: 'universal jar',
-                    group: this.LIB_GROUP,
-                    artifact: this.LIB_ARTIFACT,
+                    group: LibRepoStructure.FORGE_GROUP,
+                    artifact: LibRepoStructure.FORGE_ARTIFACT,
                     version: this.artifactVersion,
                     classifiers: ['universal'],
                     classpath: !is117OrGreater
                 },
                 {
                     name: 'client jar',
-                    group: this.LIB_GROUP,
-                    artifact: this.LIB_ARTIFACT,
+                    group: LibRepoStructure.FORGE_GROUP,
+                    artifact: LibRepoStructure.FORGE_ARTIFACT,
                     version: this.artifactVersion,
                     classifiers: ['client'],
                     classpath: !is117OrGreater
@@ -113,8 +108,8 @@ export class ForgeGradle3Adapter extends ForgeResolver {
                 this.generatedFiles.unshift(
                     {
                         name: 'base jar',
-                        group: this.LIB_GROUP,
-                        artifact: this.LIB_ARTIFACT,
+                        group: LibRepoStructure.FORGE_GROUP,
+                        artifact: LibRepoStructure.FORGE_ARTIFACT,
                         version: this.artifactVersion,
                         classifiers: [undefined]
                     }
@@ -128,21 +123,21 @@ export class ForgeGradle3Adapter extends ForgeResolver {
                 this.generatedFiles.unshift(
                     {
                         name: 'fmlcore',
-                        group: this.LIB_GROUP,
+                        group: LibRepoStructure.FORGE_GROUP,
                         artifact: LibRepoStructure.FMLCORE_ARTIFACT,
                         version: this.artifactVersion,
                         classifiers: [undefined]
                     },
                     {
                         name: 'javafmllanguage',
-                        group: this.LIB_GROUP,
+                        group: LibRepoStructure.FORGE_GROUP,
                         artifact: LibRepoStructure.JAVAFMLLANGUAGE_ARTIFACT,
                         version: this.artifactVersion,
                         classifiers: [undefined]
                     },
                     {
                         name: 'mclanguage',
-                        group: this.LIB_GROUP,
+                        group: LibRepoStructure.FORGE_GROUP,
                         artifact: LibRepoStructure.MCLANGUAGE_ARTIFACT,
                         version: this.artifactVersion,
                         classifiers: [undefined]
@@ -157,7 +152,7 @@ export class ForgeGradle3Adapter extends ForgeResolver {
                 this.generatedFiles.unshift(
                     {
                         name: 'lowcodelanguage',
-                        group: this.LIB_GROUP,
+                        group: LibRepoStructure.FORGE_GROUP,
                         artifact: LibRepoStructure.LOWCODELANGUAGE_ARTIFACT,
                         version: this.artifactVersion,
                         classifiers: [undefined]
@@ -245,14 +240,14 @@ export class ForgeGradle3Adapter extends ForgeResolver {
         const libRepo = this.repoStructure.getLibRepoStruct()
 
         // Get Installer
-        const installerPath = libRepo.getLocalForge(this.artifactVersion, 'installer', this.LIB_GROUP, this.LIB_ARTIFACT)
+        const installerPath = libRepo.getLocalForge(this.artifactVersion, 'installer')
         ForgeGradle3Adapter.logger.debug(`Checking for forge installer at ${installerPath}..`)
         if (!await libRepo.artifactExists(installerPath)) {
             ForgeGradle3Adapter.logger.debug('Forge installer not found locally, initializing download..')
             await libRepo.downloadArtifactByComponents(
                 this.REMOTE_REPOSITORY,
-                this.LIB_GROUP,
-                this.LIB_ARTIFACT,
+                LibRepoStructure.FORGE_GROUP,
+                LibRepoStructure.FORGE_ARTIFACT,
                 this.artifactVersion, 'installer', 'jar'
             )
         } else {
@@ -584,10 +579,10 @@ export class ForgeGradle3Adapter extends ForgeResolver {
         await writeJson(versionManifestDest, versionManifest, { spaces: 4 })
 
         const libRepo = this.repoStructure.getLibRepoStruct()
-        const universalLocalPath = libRepo.getLocalForge(this.artifactVersion, 'universal', this.LIB_GROUP, this.LIB_ARTIFACT)
+        const universalLocalPath = libRepo.getLocalForge(this.artifactVersion, 'universal')
         ForgeGradle3Adapter.logger.debug(`Checking for Forge Universal jar at ${universalLocalPath}..`)
 
-        const forgeMdl = versionManifest.libraries.find(val => val.name.startsWith(`${this.LIB_GROUP}:${this.LIB_ARTIFACT}:`))
+        const forgeMdl = versionManifest.libraries.find(val => val.name.startsWith('net.minecraftforge:forge:'))
 
         if(forgeMdl == null) {
             throw new Error('Forge entry not found in version.json!')
@@ -614,8 +609,8 @@ export class ForgeGradle3Adapter extends ForgeResolver {
         if(!forgeUniversalBuffer) {
             await libRepo.downloadArtifactByComponents(
                 this.REMOTE_REPOSITORY,
-                this.LIB_GROUP,
-                this.LIB_ARTIFACT,
+                LibRepoStructure.FORGE_GROUP,
+                LibRepoStructure.FORGE_ARTIFACT,
                 this.artifactVersion, 'universal', 'jar')
             forgeUniversalBuffer = await readFile(universalLocalPath)
         }
@@ -624,8 +619,8 @@ export class ForgeGradle3Adapter extends ForgeResolver {
 
         const forgeModule: Module = {
             id: MavenUtil.mavenComponentsToIdentifier(
-                this.LIB_GROUP,
-                this.LIB_ARTIFACT,
+                LibRepoStructure.FORGE_GROUP,
+                LibRepoStructure.FORGE_ARTIFACT,
                 this.artifactVersion, 'universal'
             ),
             name: 'Minecraft Forge',
@@ -635,8 +630,8 @@ export class ForgeGradle3Adapter extends ForgeResolver {
                 await lstat(universalLocalPath),
                 libRepo.getArtifactUrlByComponents(
                     this.baseUrl,
-                    this.LIB_GROUP,
-                    this.LIB_ARTIFACT,
+                    LibRepoStructure.FORGE_GROUP,
+                    LibRepoStructure.FORGE_ARTIFACT,
                     this.artifactVersion, 'universal'
                 )
             ),
@@ -657,7 +652,7 @@ export class ForgeGradle3Adapter extends ForgeResolver {
         })
 
         for(const lib of versionManifest.libraries) {
-            if (lib.name.startsWith(`${this.LIB_GROUP}:${this.LIB_ARTIFACT}:`)) {
+            if (lib.name.startsWith('net.minecraftforge:forge:')) {
                 // We've already processed forge.
                 continue
             }

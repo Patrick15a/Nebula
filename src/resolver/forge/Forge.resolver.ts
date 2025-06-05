@@ -20,11 +20,10 @@ export abstract class ForgeResolver extends BaseResolver {
         protected minecraftVersion: MinecraftVersion,
         protected forgeVersion: string,
         protected discardOutput: boolean,
-        protected invalidateCache: boolean,
-        repoName = 'forge'
+        protected invalidateCache: boolean
     ) {
         super(absoluteRoot, relativeRoot, baseUrl)
-        this.repoStructure = new RepoStructure(absoluteRoot, relativeRoot, repoName)
+        this.repoStructure = new RepoStructure(absoluteRoot, relativeRoot, 'forge')
         this.artifactVersion = this.inferArtifactVersion()
         this.checkSecurity()
     }

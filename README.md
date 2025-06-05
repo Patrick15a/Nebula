@@ -107,23 +107,18 @@ Options:
   * OPTIONAL (default: null)
   * If not provided forge will not be enabled.
   * You can provide either `latest` or `recommended` to use the latest/recommended version of forge.
-* `--neoforge <string>` Specify NeoForge version. Use `latest` to automatically resolve the newest release.
-  * OPTIONAL (default: null)
-  * If not provided NeoForge will not be enabled.
 * `--fabric <string>` Specify fabric loader version
   * OPTIONAL (default: null)
   * If not provided fabric will not be enabled.
   * You can provide either `latest` or `recommended` to use the latest/recommended version of fabric.
 
-> [!NOTE]
-> Forge, NeoForge and Fabric cannot be used together on the same server. This command will fail if multiple loaders are provided.
+> [!NOTE]  
+> Forge and fabric cannot be used together on the same server. This command will fail if both are provided.
 
 >
 > Example Usage
 >
 > `generate server Test1 1.12.2 --forge 14.23.5.2847`
->
-> `generate server Test2 1.21.1 --neoforge latest`
 >
 
 ---
@@ -192,14 +187,6 @@ Generate the JSON schemas used by Nebula's internal types (ex. Distro Meta and S
 Get the latest version of Forge.
 
 `latest-forge <version>`
-
----
-
-### Latest NeoForge
-
-Get the latest version of NeoForge.
-
-`latest-neoforge`
 
 ---
 

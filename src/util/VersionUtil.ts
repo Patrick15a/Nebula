@@ -94,23 +94,6 @@ export class VersionUtil {
     }
 
     // -------------------------------
-    // NeoForge
-
-    public static async getNeoForgeVersions(): Promise<string[]> {
-        const response = await got.get<{isSnapshot: boolean, versions: string[]}>({
-            method: 'get',
-            url: 'https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/neoforge',
-            responseType: 'json'
-        })
-        return response.body.versions
-    }
-
-    public static async getLatestNeoForgeVersion(): Promise<string> {
-        const versions = await VersionUtil.getNeoForgeVersions()
-        return versions[versions.length - 1]
-    }
-
-    // -------------------------------
     // Fabric
 
     public static async getFabricInstallerMeta(): Promise<FabricInstallerMeta[]> {
