@@ -8,7 +8,8 @@
     "clean": "rimraf dist",
     "tsc": "tsc",
     "build": "npm run clean && npm run tsc",
-    "start": "npm run build && node dist/index.js",
+    "prestart": "npm run build",
+    "start": "node dist/index.js",
     "fs": "node dist/index.js",
     "faststart": "node dist/index.js",
     "lint": "eslint ."
