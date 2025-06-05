@@ -176,11 +176,16 @@ const generateServerCommand: CommandModule = {
                 describe: 'Forge version.',
                 type: 'string'
             })
+            .option('neoforge', {
+                describe: 'NeoForge version.',
+                type: 'string'
+            })
             .option('fabric', {
                 describe: 'Fabric version.',
                 type: 'string'
             })
-            .conflicts('forge', 'fabric')
+            .conflicts('forge', ['fabric', 'neoforge'])
+            .conflicts('neoforge', 'fabric')
     },
     handler: async (argv) => {
         argv.root = getRoot()
@@ -188,6 +193,7 @@ const generateServerCommand: CommandModule = {
         logger.debug(`Root set to ${argv.root}`)
         logger.debug(`Generating server ${argv.id} for Minecraft ${argv.version}.`,
             `\n\t└ Forge version: ${argv.forge}`,
+            `\n\t└ NeoForge version: ${argv.neoforge}`,
             `\n\t└ Fabric version: ${argv.fabric}`
         )
 
@@ -199,6 +205,15 @@ const generateServerCommand: CommandModule = {
                 const version = await VersionUtil.getPromotedForgeVersion(minecraftVersion, argv.forge as string)
                 logger.debug(`Forge version set to ${version}`)
                 argv.forge = version
+            }
+        }
+
+        if(argv.neoforge != null) {
+            if ((argv.neoforge as string).toLowerCase() === 'latest') {
+                logger.debug('Resolving latest NeoForge Version..')
+                const version = await VersionUtil.getLatestNeoForgeVersion()
+                logger.debug(`NeoForge version set to ${version}`)
+                argv.neoforge = version
             }
         }
 
@@ -217,7 +232,8 @@ const generateServerCommand: CommandModule = {
             minecraftVersion,
             {
                 forgeVersion: argv.forge as string,
-                fabricVersion: argv.fabric as string
+                fabricVersion: argv.fabric as string,
+                neoforgeVersion: argv.neoforge as string
             }
         )
     }
@@ -408,6 +424,16 @@ const recommendedForgeCommand: CommandModule = {
     }
 }
 
+const latestNeoForgeCommand: CommandModule = {
+    command: 'latest-neoforge',
+    describe: 'Get the latest version of NeoForge.',
+    handler: async () => {
+        logger.debug('Invoked latest-neoforge')
+        const ver = await VersionUtil.getLatestNeoForgeVersion()
+        logger.info(`Latest version: NeoForge ${ver}`)
+    }
+}
+
 const testCommand: CommandModule = {
     command: 'test <mcVer> <forgeVer>',
     describe: 'Validate a distribution.json against the spec.',
@@ -436,6 +462,7 @@ await yargs(hideBin(process.argv))
     .command(validateCommand)
     .command(latestForgeCommand)
     .command(recommendedForgeCommand)
+    .command(latestNeoForgeCommand)
     .command(testCommand)
     .demandCommand()
     .help()
