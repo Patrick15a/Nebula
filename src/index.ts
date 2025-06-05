@@ -33,7 +33,7 @@ function getHeliosDataFolder(): string | null {
 function getBaseURL(): string {
     let baseUrl = process.env.BASE_URL!
     // Users must provide protocol in all other instances.
-    if (baseUrl.indexOf('//') === -1) {
+    if (!baseUrl.includes('//')) {
         if (baseUrl.toLowerCase().startsWith('localhost')) {
             baseUrl = 'http://' + baseUrl
         } else {
@@ -199,6 +199,17 @@ const generateServerCommand: CommandModule = {
                 const version = await VersionUtil.getPromotedForgeVersion(minecraftVersion, argv.forge as string)
                 logger.debug(`Forge version set to ${version}`)
                 argv.forge = version
+            }
+            if(minecraftVersion.isGreaterThanOrEqualTo(new MinecraftVersion('1.20.3'))) {
+                logger.error('┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓')
+                logger.error('┃                     !!  WARNING !!                      ┃')
+                logger.error('┃                                                         ┃')
+                logger.error('┃    Forge 1.20.3+ removed support for --fml.modLists.    ┃')
+                logger.error('┃  Helios Launcher can no longer load mods through Forge. ┃')
+                logger.error('┃      Please use Fabric or await NeoForged Support.      ┃')
+                logger.error('┃                                                         ┃')
+                logger.error('┃                     !!  WARNING !!                      ┃')
+                logger.error('┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛')
             }
         }
 
