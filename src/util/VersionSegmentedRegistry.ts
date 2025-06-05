@@ -2,6 +2,7 @@ import { ForgeModStructure113 } from '../structure/spec_model/module/forgemod/Fo
 import { ForgeModStructure17 } from '../structure/spec_model/module/forgemod/ForgeMod17.struct.js'
 import { ForgeGradle3Adapter } from '../resolver/forge/adapter/ForgeGradle3.resolver.js'
 import { ForgeGradle2Adapter } from '../resolver/forge/adapter/ForgeGradle2.resolver.js'
+import { NeoForgeGradleAdapter } from '../resolver/neoforge/adapter/NeoForgeGradle.resolver.js'
 import { ForgeResolver } from '../resolver/forge/Forge.resolver.js'
 import { BaseForgeModStructure } from '../structure/spec_model/module/ForgeMod.struct.js'
 import { MinecraftVersion } from './MinecraftVersion.js'
@@ -11,7 +12,8 @@ export class VersionSegmentedRegistry {
 
     public static readonly FORGE_ADAPTER_IMPL = [
         ForgeGradle2Adapter,
-        ForgeGradle3Adapter
+        ForgeGradle3Adapter,
+        NeoForgeGradleAdapter
     ]
 
     public static readonly FORGEMOD_STRUCT_IMPL = [
