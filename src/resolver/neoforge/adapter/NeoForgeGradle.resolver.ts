@@ -31,7 +31,6 @@ export class NeoForgeGradleAdapter extends ForgeResolver {
 
     private static readonly WILDCARD_MCP_VERSION = '${mcpVersion}'
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public static isForVersion(version: MinecraftVersion, libraryVersion: string): boolean {
         return VersionUtil.isVersionAcceptable(version, [21, 22, 23])
     }
@@ -237,7 +236,6 @@ export class NeoForgeGradleAdapter extends ForgeResolver {
         return this.process()
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public isForVersion(version: MinecraftVersion, libraryVersion: string): boolean {
         return NeoForgeGradleAdapter.isForVersion(version, libraryVersion)
     }
