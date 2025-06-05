@@ -33,11 +33,7 @@ export class ForgeGradle3Adapter extends ForgeResolver {
         if(version.getMinor() === 12 && VersionUtil.isOneDotTwelveFG2(libraryVersion)) {
             return false
         }
-        return VersionUtil.isVersionAcceptable(version, [12, 13, 14, 15, 16, 17, 18, 19, 20, 21])
-    }
-
-    public static isExecutableJar(version: MinecraftVersion): boolean {
-        return version.isGreaterThanOrEqualTo(new MinecraftVersion('1.20.3'))
+        return VersionUtil.isVersionAcceptable(version, [12, 13, 14, 15, 16, 17, 18, 19, 20])
     }
 
     private generatedFiles: GeneratedFile[] | undefined
@@ -58,65 +54,7 @@ export class ForgeGradle3Adapter extends ForgeResolver {
 
     private configure(): void {
 
-        if(ForgeGradle3Adapter.isExecutableJar(this.minecraftVersion)) {
-            
-            // Separate block for 1.20.4+
-
-            this.generatedFiles = [
-                {
-                    name: 'universal jar',
-                    group: LibRepoStructure.FORGE_GROUP,
-                    artifact: LibRepoStructure.FORGE_ARTIFACT,
-                    version: this.artifactVersion,
-                    classifiers: ['universal'],
-                },
-                {
-                    name: 'client jar',
-                    group: LibRepoStructure.FORGE_GROUP,
-                    artifact: LibRepoStructure.FORGE_ARTIFACT,
-                    version: this.artifactVersion,
-                    classifiers: ['client']
-                },
-                {
-                    name: 'client shim',
-                    group: LibRepoStructure.FORGE_GROUP,
-                    artifact: LibRepoStructure.FORGE_ARTIFACT,
-                    version: this.artifactVersion,
-                    classifiers: ['shim'],
-                    classpath: false
-                },
-                {
-                    name: 'fmlcore',
-                    group: LibRepoStructure.FORGE_GROUP,
-                    artifact: LibRepoStructure.FMLCORE_ARTIFACT,
-                    version: this.artifactVersion,
-                    classifiers: [undefined]
-                },
-                {
-                    name: 'javafmllanguage',
-                    group: LibRepoStructure.FORGE_GROUP,
-                    artifact: LibRepoStructure.JAVAFMLLANGUAGE_ARTIFACT,
-                    version: this.artifactVersion,
-                    classifiers: [undefined]
-                },
-                {
-                    name: 'mclanguage',
-                    group: LibRepoStructure.FORGE_GROUP,
-                    artifact: LibRepoStructure.MCLANGUAGE_ARTIFACT,
-                    version: this.artifactVersion,
-                    classifiers: [undefined]
-                },
-                {
-                    name: 'lowcodelanguage',
-                    group: LibRepoStructure.FORGE_GROUP,
-                    artifact: LibRepoStructure.LOWCODELANGUAGE_ARTIFACT,
-                    version: this.artifactVersion,
-                    classifiers: [undefined]
-                }
-            ]
-
-            return
-        }
+        const is117OrGreater = this.minecraftVersion.getMinor() >= 17
 
         // Configure for 13, 14, 15, 16, 17, 18, 19
         if(VersionUtil.isVersionAcceptable(this.minecraftVersion, [13, 14, 15, 16, 17, 18, 19, 20])) {
@@ -131,7 +69,7 @@ export class ForgeGradle3Adapter extends ForgeResolver {
                     artifact: LibRepoStructure.FORGE_ARTIFACT,
                     version: this.artifactVersion,
                     classifiers: ['universal'],
-                    classpath: false
+                    classpath: !is117OrGreater
                 },
                 {
                     name: 'client jar',
@@ -139,7 +77,7 @@ export class ForgeGradle3Adapter extends ForgeResolver {
                     artifact: LibRepoStructure.FORGE_ARTIFACT,
                     version: this.artifactVersion,
                     classifiers: ['client'],
-                    classpath: false
+                    classpath: !is117OrGreater
                 },
                 {
                     name: 'client data',
@@ -148,7 +86,7 @@ export class ForgeGradle3Adapter extends ForgeResolver {
                     version: this.minecraftVersion.toString(),
                     classifiers: ['data'],
                     skipIfNotPresent: true,
-                    classpath: false
+                    classpath: !is117OrGreater
                 },
                 {
                     name: 'client srg',
@@ -156,7 +94,7 @@ export class ForgeGradle3Adapter extends ForgeResolver {
                     artifact: LibRepoStructure.MINECRAFT_CLIENT_ARTIFACT,
                     version: mcpUnifiedVersion,
                     classifiers: ['srg'],
-                    classpath: false
+                    classpath: !is117OrGreater
                 }
             ]
             this.wildcardsInUse = [
@@ -262,7 +200,7 @@ export class ForgeGradle3Adapter extends ForgeResolver {
                             'slim',
                             'slim-stable'
                         ],
-                        classpath: false
+                        classpath: !is117OrGreater
                     },
                     {
                         name: 'client extra',
@@ -273,7 +211,7 @@ export class ForgeGradle3Adapter extends ForgeResolver {
                             'extra',
                             'extra-stable'
                         ],
-                        classpath: false
+                        classpath: !is117OrGreater
                     }
                 )
 
@@ -441,7 +379,7 @@ export class ForgeGradle3Adapter extends ForgeResolver {
         const libDir = join(installerOutputDir, 'libraries')
         
         if(this.wildcardsInUse) {
-            if(this.wildcardsInUse.includes(ForgeGradle3Adapter.WILDCARD_MCP_VERSION)) {
+            if(this.wildcardsInUse.indexOf(ForgeGradle3Adapter.WILDCARD_MCP_VERSION) > -1) {
 
                 const mcpVersion = this.getMCPVersion(versionManifest.arguments.game)
                 if(mcpVersion == null) {
@@ -449,7 +387,7 @@ export class ForgeGradle3Adapter extends ForgeResolver {
                 }
 
                 this.generatedFiles = this.generatedFiles!.map(f => {
-                    if(f.version.includes(ForgeGradle3Adapter.WILDCARD_MCP_VERSION)) {
+                    if(f.version.indexOf(ForgeGradle3Adapter.WILDCARD_MCP_VERSION) > -1) {
                         return {
                             ...f,
                             version: f.version.replace(ForgeGradle3Adapter.WILDCARD_MCP_VERSION, mcpVersion)

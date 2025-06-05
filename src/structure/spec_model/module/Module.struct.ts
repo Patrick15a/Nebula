@@ -155,10 +155,10 @@ export abstract class ModuleStructure extends BaseModelStructure<Module> {
             let claritasCandidates = moduleCandidates
             const exceptionCandidates: [ModuleCandidate, ClaritasException][] = []
             for(const exception of this.getClaritasExceptions()) {
-                const exceptionCandidate = moduleCandidates.find((value) => value.file.toLowerCase().includes(exception.exceptionName))
+                const exceptionCandidate = moduleCandidates.find((value) => value.file.toLowerCase().indexOf(exception.exceptionName) > -1)
                 if(exceptionCandidate != null) {
                     exceptionCandidates.push([exceptionCandidate, exception])
-                    claritasCandidates = claritasCandidates.filter((value) => !value.file.toLowerCase().includes(exception.exceptionName))
+                    claritasCandidates = claritasCandidates.filter((value) => value.file.toLowerCase().indexOf(exception.exceptionName) === -1)
                 }
             }
 
