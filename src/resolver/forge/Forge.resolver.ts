@@ -7,8 +7,8 @@ import { LoggerUtil } from '../../util/LoggerUtil.js'
 
 export abstract class ForgeResolver extends BaseResolver {
 
-    protected readonly MOJANG_REMOTE_REPOSITORY = 'https://libraries.minecraft.net/'
-    protected readonly REMOTE_REPOSITORY = 'https://files.minecraftforge.net/maven/'
+    protected readonly MOJANG_REMOTE_REPOSITORY: string = 'https://libraries.minecraft.net/'
+    protected readonly REMOTE_REPOSITORY: string = 'https://files.minecraftforge.net/maven/'
 
     protected repoStructure: RepoStructure
     protected artifactVersion: string
@@ -20,10 +20,11 @@ export abstract class ForgeResolver extends BaseResolver {
         protected minecraftVersion: MinecraftVersion,
         protected forgeVersion: string,
         protected discardOutput: boolean,
-        protected invalidateCache: boolean
+        protected invalidateCache: boolean,
+        repoName = 'forge'
     ) {
         super(absoluteRoot, relativeRoot, baseUrl)
-        this.repoStructure = new RepoStructure(absoluteRoot, relativeRoot, 'forge')
+        this.repoStructure = new RepoStructure(absoluteRoot, relativeRoot, repoName)
         this.artifactVersion = this.inferArtifactVersion()
         this.checkSecurity()
     }
